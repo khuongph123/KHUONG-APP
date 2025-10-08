@@ -12,4 +12,5 @@ swapon /swapfile
 npm install
 
 # Cài đặt trình duyệt cho Puppeteer
+
 npx puppeteer browsers install chrome
