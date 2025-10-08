@@ -15,14 +15,18 @@ app.use(cors());
 app.use(express.static('.'));
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
-// !!! DÁN CHUỖI KẾT NỐI MỚI NHẤT CỦA BẠN VÀO ĐÂY !!!
 const BROWSERLESS_CONNECTION_STRING = 'wss://chrome.browserless.io?token=2TCK6pkKFF5RpZzb18f9a7c0de4f16f31a01ee454a87e10bb';
 
 // --- BIẾN CACHE ---
 const CACHE = {};
 const CACHE_TTL = 10 * 60 * 1000; // 10 phút
 
-// --- HÀM LẤY ẢNH (Không đổi) ---
+// --- HEALTH CHECK ROUTE ---
+app.get('/', (req, res) => {
+    res.status(200).send('Server đang hoạt động');
+});
+
+// --- HÀM LẤY ẢNH ---
 async function getOptimizedImage(articleUrl) {
     if (!articleUrl) return null;
     const baseUrl = 'https://congan.quangtri.gov.vn/';
@@ -43,40 +47,35 @@ async function getOptimizedImage(articleUrl) {
     return null;
 }
 
-// --- API Endpoint (Đã thiết kế lại hoàn toàn) ---
+// --- API Endpoint ---
 app.get('/api/news', async (req, res) => {
     const category = req.query.category || 'all';
     const now = Date.now();
 
-    // Bước 1: Kiểm tra cache trước
     if (CACHE[category] && (now - CACHE[category].lastFetch < CACHE_TTL)) {
         console.log(`[LOG] Trả về dữ liệu từ cache cho danh mục: ${category}.`);
         return res.json(CACHE[category].data);
     }
 
-    // Nếu không có cache, bắt đầu quá trình cào dữ liệu
     console.log(`[LOG] Cache rỗng/hết hạn. Bắt đầu quá trình cào dữ liệu mới cho: ${category}`);
     let browser = null;
     try {
-        // Bước 2: Kết nối đến Browserless.io
         console.log("[LOG] Đang kết nối đến Browserless.io...");
         if (!BROWSERLESS_CONNECTION_STRING || BROWSERLESS_CONNECTION_STRING.includes('YOUR_API_KEY')) {
             throw new Error('Vui lòng cung cấp Connection String của Browserless.io hợp lệ.');
         }
+
         browser = await puppeteer.connect({
             browserWSEndpoint: BROWSERLESS_CONNECTION_STRING,
         });
         console.log("[LOG] Kết nối thành công.");
-
         const page = await browser.newPage();
         const pageToScrape = category === 'all'
             ? 'https://congan.quangtri.gov.vn/'
             : `https://congan.quangtri.gov.vn/category/${category}/`;
 
         await page.goto(pageToScrape, { waitUntil: 'networkidle2', timeout: 45000 });
-        
         const articlesFromPage = await page.evaluate(() => {
-            // ... (Phần evaluate không thay đổi)
             const articles = [];
             const selectors = ['.td-block-span6', '.td-module-container', 'article.td-post', '.td-animation-stack', '.item-details'];
             let articleElements = [];
@@ -84,6 +83,7 @@ app.get('/api/news', async (req, res) => {
                 articleElements = document.querySelectorAll(selector);
                 if (articleElements.length > 0) break;
             }
+
             articleElements.forEach(el => {
                 const titleEl = el.querySelector('h3.entry-title a, .td-module-title a');
                 if (titleEl && titleEl.href) {
@@ -104,7 +104,6 @@ app.get('/api/news', async (req, res) => {
         await page.close();
         console.log(`[LOG] Đã cào được ${articlesFromPage.length} bài viết.`);
 
-        // Bước 3: Lấy ảnh tối ưu (không đổi)
         const articlePromises = articlesFromPage.map(async (item) => {
             if (!item.imageUrl || item.imageUrl.includes('placeholder')) {
                 const imageUrl = await getOptimizedImage(item.link);
@@ -112,9 +111,8 @@ app.get('/api/news', async (req, res) => {
             }
             return item;
         });
-        const finalArticles = await Promise.all(articlePromises);
 
-        // Bước 4: Lưu cache và trả về kết quả
+        const finalArticles = await Promise.all(articlePromises);
         CACHE[category] = { data: finalArticles, lastFetch: now };
         console.log(`[LOG] Lấy thành công và đã cập nhật cache cho '${category}'.`);
         res.json(finalArticles);
@@ -123,7 +121,6 @@ app.get('/api/news', async (req, res) => {
         console.error(`[ERROR] Lỗi khi lấy tin tức cho danh mục ${category}:`, error.message);
         res.status(500).json({ error: `Không thể lấy dữ liệu.`, details: error.message });
     } finally {
-        // Bước 5: Luôn luôn ngắt kết nối sau khi hoàn thành (dù thành công hay thất bại)
         if (browser) {
             console.log("[LOG] Đang ngắt kết nối khỏi Browserless.io.");
             await browser.disconnect();
@@ -132,7 +129,7 @@ app.get('/api/news', async (req, res) => {
     }
 });
 
-// --- Image Proxy Endpoint (Không đổi) ---
+// --- Image Proxy Endpoint ---
 app.get('/api/image-proxy', async (req, res) => {
     const imageUrl = req.query.url;
     if (!imageUrl) return res.status(400).send('Missing url parameter');
@@ -148,6 +145,6 @@ app.get('/api/image-proxy', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server đang chạy tại http://0.0.0.0:${PORT}`);
 });
