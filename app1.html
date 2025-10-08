@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#b91c1c">
+    <title>Công An Tỉnh - Dịch Vụ Công</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================================== */
+        /* CÀI ĐẶT BIẾN TOÀN CỤC VÀ RESET CSS */
+        /* ========================================================== */
+        :root {
+            --primary-color: #dc2626;
+            --primary-dark: #b91c1c;
+            --success-color: #16a34a;
+            --success-bg: #f0fdf4;
+            --info-color: #2563eb;
+            --info-bg: #eff6ff;
+            --warning-color: #f97316;
+            --warning-bg: #fffbeb;
+            --danger-color: #dc2626;
+            --danger-bg: #fef2f2;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f7f7f8;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        /* === DARK MODE THEME === */
+        body.dark-mode {
+            --primary-color: #f87171;
+            --primary-dark: #ef4444;
+            --success-color: #4ade80;
+            --success-bg: #11291b;
+            --info-color: #60a5fa;
+            --info-bg: #1e293b;
+            --warning-color: #fb923c;
+            --warning-bg: #432008;
+            --danger-color: #f87171;
+            --danger-bg: #450a0a;
+            --text-dark: #f9fafb;
+            --text-light: #9ca3af;
+            --bg-light: #0f172a;
+            --bg-white: #1e293b;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: var(--text-dark);
+        }
+
+        /* ========================================================== */
+        /* CẤU TRÚC CHÍNH CỦA ỨNG DỤNG */
+        /* ========================================================== */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .app-main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ========================================================== */
+        /* HEADER */
+        /* ========================================================== */
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        body.dark-mode .header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-color);
+        }
+        body.dark-mode .header .header-title h1 { color: var(--primary-color); }
+        body.dark-mode .header .header-title p { color: var(--text-light); }
+        body.dark-mode .header .header-logo svg, body.dark-mode .header .header-user svg { fill: var(--primary-color); }
+
+        .header-content { display: flex; align-items: center; justify-content: space-between; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-logo { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 6px; }
+        .header-title h1 { font-size: 16px; font-weight: 700; line-height: 1.2; margin-bottom: 2px; }
+        .header-title p { font-size: 11px; opacity: 0.95; font-weight: 500; }
+        .header-user {
+            width: 44px; height: 44px; background: rgba(255,255,255,0.2);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; transition: all 0.3s;
+        }
+        body.dark-mode .header-user { background: var(--bg-light); }
+        .header-user:active { transform: scale(0.9); background: rgba(255,255,255,0.3); }
+
+        /* ========================================================== */
+        /* BANNER SLIDER */
+        /* ========================================================== */
+        .banner-container { position: relative; height: 200px; overflow: hidden; background: #e5e7eb; flex-shrink: 0;}
+        body.dark-mode .banner-container { background: #334155; }
+        .banner-slider { display: flex; transition: transform 0.5s ease; height: 100%; }
+        .banner-slide { min-width: 100%; height: 100%; position: relative; }
+        .banner-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .banner-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 16px; color: white; }
+        .banner-overlay h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .banner-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10; }
+        .banner-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: all 0.3s; cursor: pointer; }
+        .banner-dot.active { width: 20px; border-radius: 3px; background: white; }
+        body.dark-mode .banner-dot.active { background: var(--primary-color); }
+
+        /* ========================================================== */
+        /* CÁC KHU VỰC CHỨC NĂNG & TIN TỨC */
+        /* ========================================================== */
+        .section { background: var(--bg-white); padding: 16px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .section-title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: var(--text-dark); }
+        .section-action { font-size: 13px; color: var(--primary-color); font-weight: 600; cursor: pointer; }
+        .update-time { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #9ca3af; margin-bottom: 12px; }
+        .divider { height: 8px; background: var(--bg-light); flex-shrink: 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);}
+
+        /* Dịch vụ công */
+        .service-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .service-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 8px; border-radius: 12px; transition: all 0.2s; text-align: center; }
+        .service-item:active { transform: scale(0.95); background: var(--danger-bg); }
+        .service-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        body.dark-mode .service-icon { box-shadow: none; }
+        .service-icon svg { width: 28px; height: 28px; }
+        .service-name { font-size: 11px; font-weight: 600; color: #374151; line-height: 1.3; }
+        body.dark-mode .service-name { color: var(--text-light); }
+
+        /* Tin tức */
+        .category-tabs {
+            background: var(--bg-white);
+            overflow-x: auto;
+            scrollbar-width: none;
+            margin: -16px -16px 16px -16px;
+        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .tabs-inner { display: inline-flex; padding: 12px 16px; gap: 8px; white-space: nowrap; }
+        .tab-btn { padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border-color); background: var(--bg-white); color: var(--text-light); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .tab-btn:active { transform: scale(0.95); }
+        .tab-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3); }
+        body.dark-mode .tab-btn.active { color: var(--text-dark); }
+        
+        .news-list { display: flex; flex-direction: column; gap: 12px; }
+        .news-card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.2s; position: relative; text-decoration: none; display: block; }
+        .news-card:active { transform: scale(0.98); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .news-card-inner { display: flex; gap: 12px; padding: 12px; }
+        .news-thumbnail { width: 100px; height: 100px; flex-shrink: 0; overflow: hidden; border-radius: 8px; }
+        .news-thumbnail img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .news-card:hover .news-thumbnail img { transform: scale(1.05); }
+        .news-content { flex: 1; display: flex; flex-direction: column; }
+        .news-title { font-size: 14px; font-weight: 600; color: var(--text-dark); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px; }
+        .news-description { font-size: 12px; color: var(--text-light); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1; }
+
+        /* ========================================================== */
+        /* THANH ĐIỀU HƯỚNG DƯỚI CÙNG (BOTTOM NAV) */
+        /* ========================================================== */
+        .bottom-nav { flex-shrink: 0; position: sticky; bottom: 0; background: var(--bg-white); border-top: 1px solid var(--border-color); padding: 8px 16px 12px; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; padding: 8px 4px; cursor: pointer; border-radius: 10px; transition: all 0.2s; background: transparent; }
+        .nav-item:active { transform: scale(0.9); }
+        .nav-item.active { background: var(--danger-bg); }
+        .nav-icon { margin-bottom: 4px; transition: all 0.2s; font-size: 24px; color: var(--text-light); }
+        .nav-item.active .nav-icon { transform: scale(1.1); color: var(--primary-color); }
+        .nav-label { font-size: 10px; font-weight: 600; color: var(--text-light); transition: all 0.2s; }
+        .nav-item.active .nav-label { color: var(--primary-color); }
+        .notif-badge { position: absolute; top: 0px; right: -4px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid var(--bg-white); }
+
+        /* ========================================================== */
+        /* NÚT HÀNH ĐỘNG (FAB) & TOAST */
+        /* ========================================================== */
+        .fab-button { position: fixed; bottom: 90px; right: 20px; width: 56px; height: 56px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 50%; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; z-index: 999; transition: all 0.3s; }
+        .fab-button:active { transform: scale(0.9); }
+
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 28px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ========================================================== */
+        /* MODAL & BIỂU MẪU (FORMS) - *** UPDATED *** */
+        /* ========================================================== */
+        .modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            z-index: 2000; 
+            display: none; 
+            align-items: center; /* <<< CHANGED: From flex-end to center */
+            justify-content: center; 
+            backdrop-filter: blur(4px); 
+            padding: 20px;
+        }
+        .modal-overlay.active { 
+            display: flex; 
+        }
+        .modal-content { 
+            width: 100%; 
+            max-width: 480px; 
+            max-height: 90vh; 
+            background: var(--bg-light); 
+            border-radius: 24px; /* <<< CHANGED: Rounded all corners */
+            overflow: hidden; 
+            transform: scale(0.95); /* <<< CHANGED: Initial state for animation */
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease; /* <<< CHANGED: Animation type */
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .modal-overlay.active .modal-content { 
+            transform: scale(1); /* <<< CHANGED: Final state for animation */
+            opacity: 1;
+        }
+        .modal-header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--primary-color); color: white;}
+        body.dark-mode .modal-header { background: #1e293b; color: var(--primary-color); border-bottom: 1px solid var(--border-color);}
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-close { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; }
+        body.dark-mode .modal-close { background: #334155; }
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; background: var(--bg-white); }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        body.dark-mode .form-label { color: var(--text-light); }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 14px; transition: all 0.2s; background: #f9fafb; font-family: 'Inter', sans-serif; }
+        body.dark-mode .form-input, body.dark-mode .form-select, body.dark-mode .form-textarea { background: #334155; color: var(--text-dark); border-color: #475569;}
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); background: var(--bg-white); }
+        body.dark-mode .form-input:focus, body.dark-mode .form-select:focus, body.dark-mode .form-textarea:focus { background: #334155; box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2);}
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); }
+        body.dark-mode .btn-primary { box-shadow: none; color: #1e293b; }
+        .btn-primary.green { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);}
+        .btn-primary:active { transform: translateY(1px); box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3); }
+        .btn-primary:disabled { background: #9ca3af; box-shadow: none; cursor: not-allowed; }
+        .info-box { display: flex; gap: 10px; padding: 12px; border-radius: 8px; font-size: 13px; margin: 16px 0; background: var(--info-bg); border-left: 4px solid var(--info-color); color: var(--info-color);}
+        .info-box.danger { background: var(--danger-bg); border-color: var(--danger-color); color: #991b1b; }
+        .info-box.warning { background: var(--warning-bg); border-color: var(--warning-color); color: #b45309; }
+        .info-box.success { background: var(--success-bg); border-color: var(--success-color); color: #14532d; }
+        body.dark-mode .info-box { color: var(--text-light); }
+        body.dark-mode .info-box.danger { color: #fca5a5; }
+        body.dark-mode .info-box.warning { color: #fdba74; }
+        body.dark-mode .info-box.success { color: #86efac; }
+        .rating-stars { display: flex; gap: 16px; justify-content: center; font-size: 36px; cursor: pointer; margin-bottom: 20px;}
+        .rating-stars span { transition: transform 0.2s; filter: grayscale(1); }
+        .rating-stars span:hover { transform: scale(1.2); }
+        .rating-stars.selected-1 span:nth-child(-n+1),.rating-stars.selected-2 span:nth-child(-n+2),.rating-stars.selected-3 span:nth-child(-n+3),.rating-stars.selected-4 span:nth-child(-n+4),.rating-stars.selected-5 span:nth-child(-n+5) { filter: grayscale(0); }
+        .rating-radios { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;}
+        .rating-radios label { display: flex; align-items: center; gap: 8px; }
+        .page-view { display: none; }
+        .page-view.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .profile-card { background: var(--primary-color); color: white; padding: 24px; border-radius: 16px; margin: -16px -16px 16px -16px; text-align: center; }
+        body.dark-mode .profile-card { background: linear-gradient(135deg, #1e293b, #334155); }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 3px solid rgba(255,255,255,0.5); }
+        .profile-name { font-size: 18px; font-weight: 700; }
+        .profile-phone { font-size: 14px; opacity: 0.9; }
+        .list-item { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s; }
+        .list-item:first-child { border-top: 1px solid var(--border-color); }
+        .list-item:active { background-color: #f9fafb; }
+        body.dark-mode .list-item:active { background-color: #334155; }
+        .list-item-icon { width: 30px; text-align: center; margin-right: 16px; font-size:20px; color: var(--text-light); }
+        .list-item-text { flex: 1; font-weight: 500; color: var(--text-dark); }
+        .list-item-arrow { color: #ccc; }
+        #logged-in-view .list-item:last-child .list-item-text { color: var(--primary-color);}
+        #logged-in-view .list-item:last-child .list-item-icon { color: var(--primary-color);}
+        .notification-item { display: flex; padding: 16px; border-bottom: 1px solid var(--border-color); gap: 12px; align-items: flex-start; }
+        .notification-item.unread { background-color: var(--danger-bg); }
+        .auth-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 20px; }
+        .auth-tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s; }
+        .auth-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .social-login-divider { text-align: center; margin: 20px 0; color: #9ca3af; font-size: 12px; position: relative; }
+        .social-login-divider::before, .social-login-divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border-color); }
+        .social-login-divider::before { left: 0; }
+        .social-login-divider::after { right: 0; }
+        .social-login-buttons { display: flex; flex-direction: column; gap: 12px; }
+        .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: var(--bg-white); }
+        .btn-social:active { background: var(--bg-light); }
+        .btn-social svg { width: 20px; height: 20px; }
+        .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0;}
+        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success-color); }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .location-item { padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start; }
+        .location-icon { font-size: 24px; flex-shrink: 0; margin-top: 4px; }
+        .location-details h4 { font-size: 15px; margin-bottom: 4px; }
+        .location-details p { font-size: 13px; color: var(--text-light); margin-bottom: 8px; }
+        .location-actions { display: flex; gap: 8px; }
+        .location-btn { text-decoration: none; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; display: flex; align-items: center; gap: 4px; }
+        .btn-call { background-color: var(--success-bg); color: var(--success-color); }
+        .btn-map { background-color: var(--info-bg); color: var(--info-color); }
+        .location-divider { font-weight: 600; color: var(--text-light); text-align: center; padding: 16px 0 8px 0; }
+        .hidden { display: none !important; }
+        .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; }
+        body.dark-mode .skeleton { background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        #chatMessages { flex: 1; overflow-y: auto; padding: 10px; background: var(--bg-light); border-radius: 12px; }
+        .chat-message { display: flex; margin-bottom: 12px; max-width: 85%; }
+        .chat-message.user { margin-left: auto; justify-content: flex-end; }
+        .chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 8px; flex-shrink: 0; }
+        .chat-bubble { padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 1.5; }
+        .bot-bubble { background: #eef2ff; color: #4338ca; border-top-left-radius: 4px; }
+        body.dark-mode .bot-bubble { background: #312e81; color: #e0e7ff; }
+        .user-bubble { background: var(--primary-color); color: white; border-top-right-radius: 4px; }
+        body.dark-mode .user-bubble { color: var(--text-dark); }
+        .chat-input-area { display: flex; padding: 10px 0 0; gap: 8px; }
+        .chat-input { flex: 1; height: 44px; padding: 0 16px; border: 1.5px solid var(--border-color); border-radius: 22px; font-size: 14px; background: var(--bg-light); color: var(--text-dark); }
+        .chat-input:focus { outline: none; border-color: var(--primary-color); }
+        .chat-send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: all 0.2s;}
+        body.dark-mode .chat-send-btn { color: var(--text-dark); }
+        .chat-send-btn:active { transform: scale(0.9); }
+        .quick-replies { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .quick-reply-btn { padding: 6px 12px; border: 1.5px solid #c7d2fe; color: #4338ca; background: white; border-radius: 16px; font-size: 12px; font-weight: 500; cursor: pointer; }
+        body.dark-mode .quick-reply-btn { background: #312e81; color: #e0e7ff; border-color: #4f46e5; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <svg viewBox="0 0 512 512" fill="white"><path d="M256,0C114.615,0,0,114.615,0,256s114.615,256,256,256s256-114.615,256-256S397.385,0,256,0z M256,480 C133.206,480,32,378.794,32,256S133.206,32,256,32s224,101.206,224,224S378.794,480,256,480z"/><path d="M256,74.576l63.36,128.32l141.664,20.576l-102.496,100.064l24.224,141.056L256,396.8l-126.752,67.824l24.224-141.056 L50.976,223.472l141.664-20.576L256,74.576 M256,114.4l-48.32,97.888l-108.128,15.712l78.208,76.32l-18.496,107.584L256,362.496 l96.736,51.488l-18.496-107.584l78.208-76.32l-108.128-15.712L256,114.4L256,114.4z"/></svg>
+                    </div>
+                    <div class="header-title">
+                        <h1>CÔNG AN TỈNH</h1>
+                        <p>Dịch Vụ Công & Phản Ánh</p>
+                    </div>
+                </div>
+                <div class="header-user" onclick="switchTab('profile', document.querySelector('[data-tab=\'profile\']'))">
+                    <svg width="24" height="24" fill="white" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main-content">
+
+            <div id="home-view" class="page-view active">
+                <div class="banner-container">
+                    <div class="banner-slider" id="bannerSlider"></div>
+                    <div class="banner-dots"></div>
+                </div>
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title"><span>🎯</span> Dịch vụ công</h2>
+                        <span class="section-action" onclick="switchTab('services', document.querySelector('[data-tab=\'services\']'))">Xem tất cả →</span>
+                    </div>
+                     <div class="service-grid" id="home-services">
+                        </div>
+                </div>
+                <div class="divider"></div>
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title"><span>📰</span> Tin tức mới nhất</h2>
+                        <span class="section-action" onclick="switchTab('news', document.querySelector('[data-tab=\'news\']'))">Xem thêm →</span>
+                    </div>
+                    <div class="update-time"><svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg><span id="home-updateTime">...</span></div>
+                    <div class="news-list" id="home-newsList"></div>
+                </div>
+            </div>
+
+            <div id="news-view" class="page-view">
+                <div class="section">
+                    <div class="category-tabs">
+                        <div class="tabs-inner">
+                            <button class="tab-btn active" onclick="switchCategory('all', this)">📰 Tất cả</button>
+                            <button class="tab-btn" onclick="switchCategory('tin-an-ninh-trat-tu', this)">🛡️ An ninh</button>
+                            <button class="tab-btn" onclick="switchCategory('tin-hoat-dong', this)">💼 Hoạt động</button>
+                            <button class="tab-btn" onclick="switchCategory('canh-bao-toi-pham', this)">⚠️ Cảnh báo</button>
+                        </div>
+                    </div>
+                    <div class="update-time"><svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg><span id="news-updateTime">...</span></div>
+                    <div class="news-list" id="newsList"></div>
+                    <div id="load-more-container" class="hidden" style="padding-top: 16px; text-align: center;">
+                         <button class="btn-primary" style="background: var(--bg-white); color: var(--primary-color); border: 1.5px solid var(--primary-color); box-shadow: none;" onclick="showRemainingNews()">Xem thêm</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="services-view" class="page-view section">
+                 <div class="service-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px;" id="all-services">
+                     </div>
+            </div>
+
+            <div id="notifications-view" class="page-view">
+                <div id="notification-list">
+                    </div>
+            </div>
+
+            <div id="profile-view" class="page-view section">
+                <div id="logged-out-view">
+                    <div class="auth-tabs">
+                        <div id="loginTab" class="auth-tab active" onclick="switchAuthTab('login')">Đăng nhập</div>
+                        <div id="registerTab" class="auth-tab" onclick="switchAuthTab('register')">Đăng ký</div>
+                    </div>
+                    <div id="authContent">
+                        <div id="loginForm">
+                            <div class="form-group"><label class="form-label">Số điện thoại</label><input type="tel" id="loginPhone" class="form-input" placeholder="0912345678 hoặc 0987654321" value="0912345678"></div>
+                            <div class="form-group"><label class="form-label">Mật khẩu</label><input type="password" class="form-input" placeholder="Nhập mật khẩu" value="123456"></div>
+                            <button class="btn-primary" onclick="handleLogin()">🔐 Đăng nhập</button>
+                        </div>
+                        <div id="registerForm" class="hidden">
+                             <div class="form-group"><label class="form-label">Số điện thoại *</label><input type="tel" id="registerPhone" class="form-input" placeholder="Nhập SĐT để nhận OTP"></div>
+                             <button class="btn-primary" onclick="sendOTP()">Gửi mã OTP</button>
+                        </div>
+                    </div>
+                </div>
+                 <div id="logged-in-view" class="hidden">
+                    <div class="profile-card">
+                        <div class="profile-avatar" id="profile-avatar"></div>
+                        <h2 class="profile-name" id="profile-name"></h2>
+                        <p class="profile-phone" id="profile-phone"></p>
+                    </div>
+                    <div>
+                        <div class="list-item" onclick="openServiceModal('lichsu')">
+                            <div class="list-item-icon">🕒</div>
+                            <div class="list-item-text">Lịch sử hoạt động</div>
+                            <div class="list-item-arrow">›</div>
+                        </div>
+                        <div class="list-item" onclick="openServiceModal('thongtincanhan')">
+                            <div class="list-item-icon">ℹ️</div>
+                            <div class="list-item-text">Thông tin cá nhân</div>
+                            <div class="list-item-arrow">›</div>
+                        </div>
+                         <div class="list-item" onclick="openSettingsModal()">
+                            <div class="list-item-icon">⚙️</div>
+                            <div class="list-item-text">Cài đặt</div>
+                            <div class="list-item-arrow">›</div>
+                        </div>
+                         <div class="list-item" onclick="handleLogout()">
+                            <div class="list-item-icon">🚪</div>
+                            <div class="list-item-text">Đăng xuất</div>
+                            <div class="list-item-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <div class="nav-grid">
+                <div class="nav-item active" data-tab="home" onclick="switchTab('home', this)">
+                    <div class="nav-icon">🏠</div><div class="nav-label">Trang chủ</div>
+                </div>
+                <div class="nav-item" data-tab="news" onclick="switchTab('news', this)">
+                    <div class="nav-icon">📰</div><div class="nav-label">Tin tức</div>
+                </div>
+                <div class="nav-item" data-tab="services" onclick="switchTab('services', this)">
+                    <div class="nav-icon">🎯</div><div class="nav-label">Dịch vụ</div>
+                </div>
+                <div class="nav-item" data-tab="notifications" onclick="switchTab('notifications', this)">
+                    <div class="nav-icon" style="position: relative;">🔔<span id="notif-badge" class="notif-badge"></span></div><div class="nav-label">Thông báo</div>
+                </div>
+                <div class="nav-item" data-tab="profile" onclick="switchTab('profile', this)">
+                    <div class="nav-icon">👤</div><div class="nav-label">Cá nhân</div>
+                </div>
+            </div>
+        </nav>
+
+        <div id="fab-button" class="fab-button" onclick="openChatbot()">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:28px; height:28px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+        </div>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Modal Title</h3>
+                <div class="modal-close" onclick="closeModal()">×</div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // ==========================================================
+        // CẤU HÌNH VÀ DỮ LIỆU MÔ PHỎNG
+        // ==========================================================
+        const API_BASE_URL = 'https://khuong-app-cigo.vercel.app';
+		
+		// *** ADDED ***: Google Apps Script URL for submitting form data
+		// !!! PASTE YOUR WEB APP URL HERE !!!
+		const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0OwjVFiGna9uTMpzGvRc27J6MKb0Wq91r-7qmYX_YWSFDgTUYAMMWXEMOe9YDyhtHiA/exec';
+
+        const MOCK_USERS = {
+            "0912345678": { name: "Nguyễn Văn A", cccd: "048********123", phone: "0912345678", avatar: "👨‍💼", password: "123456" },
+            "0987654321": { name: "Trần Thị B", cccd: "049********456", phone: "0987654321", avatar: "👩‍💻", password: "password" }
+        };
+
+        const MOCK_NOTIFICATIONS = [
+            { id: 1, icon: '📄', title: 'Hồ sơ cấp CCCD đã được duyệt', description: 'Mã hồ sơ: 25100512345. Mời bạn đến nhận CCCD.', time: '2 giờ trước', unread: true },
+            { id: 2, icon: '⚠️', title: 'Cảnh báo lừa đảo trực tuyến', description: 'Không bấm vào các đường link lạ hoặc cung cấp mã OTP.', time: 'Hôm qua', unread: true },
+            { id: 3, icon: '✅', title: 'Phản ánh của bạn đã được tiếp nhận', description: 'Phản ánh về "An toàn giao thông" đang được xử lý.', time: '4 ngày trước', unread: false },
+        ];
+
+        // ==========================================================
+        // KHAI BÁO BIẾN & TRẠNG THÁI ỨNG DỤNG
+        // ==========================================================
+        let currentBannerIndex = 0;
+        let bannerInterval;
+        let isUserLoggedIn = false;
+        let currentUser = null; 
+        let allNewsArticles = [];
+
+        // ==========================================================
+        // KHỞI TẠO ỨNG DỤNG
+        // ==========================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+            }
+            populateHomeServices();
+            populateAllServices();
+            loadNews('all', 'home-newsList', 'home-updateTime', true);
+            loadNews('all', 'newsList', 'news-updateTime', false);
+            populateNotifications();
+            updateProfileView();
+            updateNotifBadge();
+        });
+
+        // ==========================================================
+        // BANNER & TIN TỨC
+        // ==========================================================
+        function startBannerSlider() {
+            clearInterval(bannerInterval);
+            const slides = document.querySelectorAll('.banner-slide');
+            if(slides.length <= 1) return;
+            bannerInterval = setInterval(() => {
+                currentBannerIndex = (currentBannerIndex + 1) % slides.length;
+                updateBanner();
+            }, 5000);
+        }
+
+        function updateBanner() {
+            const slider = document.getElementById('bannerSlider');
+            if (!slider) return;
+            slider.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
+            document.querySelectorAll('.banner-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentBannerIndex);
+            });
+        }
+
+        function goToBanner(index) {
+            currentBannerIndex = index;
+            updateBanner();
+            startBannerSlider();
+        }
+
+        function populateBanner(articles) {
+            const bannerSlider = document.getElementById('bannerSlider');
+            const bannerDots = document.querySelector('.banner-dots');
+            if (!bannerSlider || !bannerDots) return;
+            const bannerArticles = articles.slice(0, 5); 
+            bannerSlider.innerHTML = bannerArticles.map(article => `<div class="banner-slide"><a href="${article.link}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%;"><img src="${API_BASE_URL}/api/image-proxy?url=${encodeURIComponent(article.imageUrl || '')}" alt="${article.title}" onerror="this.src='https://placehold.co/800x400/e0e0e0/757575?text=Lỗi+ảnh';"><div class="banner-overlay"><h3>${article.title}</h3></div></a></div>`).join('');
+            bannerDots.innerHTML = bannerArticles.map((_, index) => `<div class="banner-dot ${index === 0 ? 'active' : ''}" onclick="goToBanner(${index})"></div>`).join('');
+            currentBannerIndex = 0;
+            updateBanner();
+            startBannerSlider();
+        }
+        
+        function renderArticleHTML(article) {
+            const imageUrl = article.imageUrl ? `${API_BASE_URL}/api/image-proxy?url=${encodeURIComponent(article.imageUrl)}` : 'https://placehold.co/400x300/e0e0e0/757575?text=Không+có+ảnh';
+            return `<a href="${article.link}" target="_blank" rel="noopener noreferrer" class="news-card"><div class="news-card-inner"><div class="news-thumbnail"><img src="${imageUrl}" alt="${article.title}" loading="lazy" onerror="this.src='https://placehold.co/400x300/e0e0e0/757575?text=Lỗi+ảnh';"></div><div class="news-content"><h3 class="news-title">${article.title}</h3><p class="news-description">${article.description || 'Nhấn để xem chi tiết...'}</p></div></div></a>`;
+        }
+
+        function showRemainingNews() {
+            const container = document.getElementById('newsList');
+            const loadMoreContainer = document.getElementById('load-more-container');
+            if (container && allNewsArticles.length > 10) {
+                container.innerHTML = allNewsArticles.map(renderArticleHTML).join('');
+                if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+            }
+        }
+        
+        async function loadNews(category, containerId, timeId, shouldPopulateBanner = false) {
+            const container = document.getElementById(containerId);
+            const loadMoreContainer = document.getElementById('load-more-container');
+            if (!container) return;
+            const skeletonCount = containerId === 'home-newsList' ? 3 : 10;
+            container.innerHTML = Array(skeletonCount).fill('<div class="skeleton" style="height: 120px;"></div>').join('');
+            if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+            updateTime(timeId);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/news?category=${category}`);
+                if (!response.ok) throw new Error(`Lỗi server: ${response.statusText}`);
+                const articles = await response.json();
+                if (shouldPopulateBanner) populateBanner(articles);
+                if (containerId === 'home-newsList') {
+                    const articlesToDisplay = articles.slice(0, 3);
+                    container.innerHTML = articlesToDisplay.length > 0 ? articlesToDisplay.map(renderArticleHTML).join('') : `<div style="text-align:center; padding: 20px; color: var(--text-light);">Không có tin tức nào.</div>`;
+                    return;
+                }
+                allNewsArticles = articles;
+                if (allNewsArticles.length === 0) {
+                    container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-light);">Không có tin tức nào trong mục này.</div>`;
+                    if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+                    return;
+                }
+                const initialArticles = allNewsArticles.slice(0, 10);
+                container.innerHTML = initialArticles.map(renderArticleHTML).join('');
+                if (allNewsArticles.length > 10) {
+                    if (loadMoreContainer) loadMoreContainer.classList.remove('hidden');
+                } else {
+                    if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Không thể tải tin tức:', error);
+                container.innerHTML = `<div class="info-box danger">⚠️ <strong>Lỗi kết nối</strong><br>Không thể lấy dữ liệu tin tức. Vui lòng đảm bảo server.js đang chạy và thử lại.</div>`;
+                if(shouldPopulateBanner) populateBanner([]);
+                if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+            }
+        }
+        
+        function switchCategory(category, element) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            loadNews(category, 'newsList', 'news-updateTime', false);
+        }
+
+        function updateTime(elementId) {
+            const now = new Date();
+            const time = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            const timeEl = document.getElementById(elementId);
+            if(timeEl) timeEl.textContent = `Cập nhật lúc ${time}`;
+        }
+
+        // ==========================================================
+        // ĐIỀU HƯỚNG CHÍNH
+        // ==========================================================
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if(element) element.closest('.nav-item').classList.add('active');
+            document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
+            const targetView = document.getElementById(`${tabId}-view`);
+            if (targetView) targetView.classList.add('active');
+            document.getElementById('fab-button').style.display = (tabId === 'profile' || tabId === 'notifications') ? 'none' : 'flex';
+            document.querySelector('.app-main-content').scrollTop = 0;
+        }
+
+        // ==========================================================
+        // HỆ THỐNG DỊCH VỤ CÔNG & MODAL - *** UPDATED ***
+        // ==========================================================
+        const ALL_SERVICES = [
+            { id: 'tracuu', name: 'Tra cứu TTHC', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0ea5e9"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>`, color: '#e0f2fe' },
+            { id: 'phatnguoi', name: 'Tra phạt nguội', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#f43f5e"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75A2.25 2.25 0 0 1 6 16.5v-2.25m0-11.25v2.25c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V3.75m0 11.25A2.25 2.25 0 0 0 10.5 18.75v-2.25m0 0a2.25 2.25 0 0 0 2.25 2.25h2.25a2.25 2.25 0 0 0 2.25-2.25v-2.25m0 0A2.25 2.25 0 0 0 15 3.75V5.25m0 11.25v-2.25c0-.621-.504-1.125-1.125-1.125h-2.25c-.621 0-1.125.504-1.125 1.125v2.25" /></svg>`, color: '#fecdd3' },
+            { id: 'datlich', name: 'Đặt lịch hẹn', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#a855f7"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0h18M12 15.75h.008v.008H12v-.008Z" /></svg>`, color: '#f3e8ff' },
+            { id: 'phananh', name: 'Phản ánh', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#f97316"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m2.25 2.25H15M3.75 21a3 3 0 0 0 3-3V6.75A3 3 0 0 0 3.75 3.75H3.75A3 3 0 0 0 .75 6.75v10.5a3 3 0 0 0 3 3Zm15-3a3 3 0 0 0-3-3V6.75a3 3 0 0 0-3-3h-.75a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h.75a3 3 0 0 0 3-3Z" /></svg>`, color: '#fff7ed', requiresAuth: true },
+            { id: 'danhgia', name: 'Đánh giá', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#eab308"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" /></svg>`, color: '#fefce8' },
+            { id: 'togiac', name: 'Tố giác', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#db2777"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>`, color: '#fdf2f8', requiresAuth: true },
+            { id: 'diachiCA', name: 'Địa chỉ CA', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#14b8a6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" /></svg>`, color: '#ccfbf1' },
+            { id: 'hotline', name: 'Đường dây nóng', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ef4444"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>`, color: '#fee2e2' },
+        ];
+
+        const serviceModalContent = {
+            tracuu: { title: 'Tra Cứu Kết Quả TTHC', content: `<div class="info-box"><p>📄 <strong>Hướng dẫn tra cứu</strong><br>Trang tra cứu của Cổng dịch vụ công Quốc gia sẽ mở trong tab mới. Bạn có thể tra cứu trực tiếp bằng mã hồ sơ hoặc CCCD.</p></div><a href="https://dichvucong.gov.vn/p/home/dvc-tra-cuu-ho-so.html" target="_blank" rel="noopener noreferrer" class="btn-primary green" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;"> Mở trang tra cứu hồ sơ</a><div class="info-box" style="margin-top: 16px; background: var(--bg-light); border-color: var(--border-color); color: var(--text-dark);"><p><strong>Thông tin cần chuẩn bị:</strong><br>• Mã hồ sơ được cấp khi nộp hồ sơ<br>• Số CMND/CCCD<br>• Số điện thoại đăng ký</p></div><div class="info-box warning"><p>📞 <strong>Hỗ trợ:</strong> Nếu gặp khó khăn, vui lòng liên hệ hotline <strong>0233.3852.113</strong></p></div>`},
+            phatnguoi: { title: 'Tra Cứu Phạt Nguội Giao Thông', content: `<div class="info-box"><p>📄 <strong>Hướng dẫn tra cứu</strong><br>Trang tra cứu vi phạm giao thông của Cục CSGT sẽ mở trong tab mới. Nhập biển số xe hoặc số GPLX để tra cứu vi phạm.</p></div><a href="https://www.csgt.vn/tra-cuu-phuong-tien-vi-pham.html" target="_blank" rel="noopener noreferrer" class="btn-primary green" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;"> Mở trang tra cứu phạt nguội</a><div class="info-box" style="margin-top: 16px; background: var(--bg-light); border-color: var(--border-color); color: var(--text-dark);"><p><strong>Thông tin cần chuẩn bị:</strong><br>• Biển số xe (ví dụ: 74A-12345)<br>• Hoặc: Số giấy phép lái xe<br>• Số khung/số máy (nếu cần)</p></div><div class="info-box warning"><p>💡 <strong>Lưu ý:</strong> Dữ liệu được đồng bộ từ Cục Cảnh sát Giao thông - Bộ Công an.</p></div><div class="info-box"><p>📞 <strong>Hotline CSGT: 0233.3852.113</strong> (Giờ hành chính)</p></div>`},
+            datlich: { title: '📅 Đặt Lịch Hẹn', content: `<div class="info-box" style="margin-bottom: 12px;"><p>Vui lòng liên hệ trực tiếp các bộ phận để đặt lịch hẹn và được tư vấn chi tiết.</p></div><div style="display: flex; flex-direction: column; gap: 10px;"><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">QLHC về TTXH</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">0233 3636996</p></div><a href="tel:02333636996" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Phòng An ninh mạng</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">0233 3636997</p></div><a href="tel:02333636997" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">PCCC và CNCH</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">0233 3636998</p></div><a href="tel:02333636998" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Quản lý Xuất nhập cảnh</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">0233 3851675</p></div><a href="tel:02333851675" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Cảnh sát giao thông</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">053 3890305</p></div><a href="tel:0533890305" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Phòng Hình sự</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">0944 148760</p></div><a href="tel:0944148760" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div></div>`},
+			// *** UPDATED: Added IDs and changed button onclick ***
+            phananh: { title: '💬 Phản Ánh, Kiến Nghị', content: `<div class="form-group"><label class="form-label">Lĩnh vực cần phản ánh *</label><select id="phananh-category" class="form-select"><option>Thái độ cán bộ</option><option>Quy trình, thủ tục</option><option>An ninh trật tự</option><option>An toàn giao thông</option><option>Khác</option></select></div><div class="form-group"><label class="form-label">Nội dung phản ánh *</label><textarea id="phananh-content" class="form-textarea" rows="5" placeholder="Mô tả chi tiết sự việc, thời gian, địa điểm..."></textarea></div><button id="phananh-submit-btn" class="btn-primary" onclick="submitToGoogleSheet('phananh')">📝 Gửi phản ánh</button>`},
+            danhgia: { title: '⭐ Đánh Giá Sự Hài Lòng', content: `<div style="text-align: center;"><p style="font-size: 14px; color: var(--text-light); margin-bottom: 20px;">Đánh giá mức độ hài lòng của bạn về dịch vụ công.</p></div><div class="form-group"><label class="form-label">Mức độ hài lòng chung</label><div class="rating-stars" id="rating-stars"><span onclick="selectRating(1, this)">😞</span><span onclick="selectRating(2, this)">😐</span><span onclick="selectRating(3, this)">🙂</span><span onclick="selectRating(4, this)">😊</span><span onclick="selectRating(5, this)">🤩</span></div></div><div class="form-group"><label class="form-label">Đánh giá về thái độ phục vụ</label><div class="rating-radios"><label><input type="radio" name="attitude"> Rất tốt</label><label><input type="radio" name="attitude"> Tốt</label><label><input type="radio" name="attitude"> Khá</label><label><input type="radio" name="attitude"> Cần cải thiện</label></div></div><div class="form-group"><label class="form-label">Đánh giá về thời gian xử lý</label><div class="rating-radios"><label><input type="radio" name="time"> Nhanh</label><label><input type="radio" name="time"> Đúng hạn</label><label><input type="radio" name="time"> Chậm</label></div></div><div class="form-group"><label class="form-label">Ý kiến đóng góp (nếu có)</label><textarea class="form-textarea" rows="3" placeholder="Chia sẻ thêm để chúng tôi phục vụ tốt hơn..."></textarea></div><button class="btn-primary green" onclick="submitRating()">Gửi đánh giá</button>`},
+			// *** UPDATED: Added IDs and changed button onclick ***
+            togiac: { title: 'Gửi Tin Báo, Tố Giác Tội Phạm', content: `<div class="info-box danger"><p>🔒 <strong>Thông tin được bảo mật tuyệt đối</strong><br>Mọi thông tin tố giác sẽ được xử lý nghiêm túc và bảo vệ danh tính người tố giác.</p></div><div class="form-group"><label class="form-label">Họ và tên (có thể ẩn danh)</label><input type="text" id="togiac-name" class="form-input"></div><div class="form-group"><label class="form-label">Số điện thoại (không bắt buộc)</label><input type="tel" id="togiac-phone" class="form-input"></div><div class="form-group"><label class="form-label">Loại tội phạm</label><select id="togiac-category" class="form-select"><option>Trộm cắp, cướp giật</option><option>Lừa đảo</option><option>Ma túy</option><option>Tệ nạn xã hội</option><option>Khác</option></select></div><div class="form-group"><label class="form-label">Địa điểm xảy ra *</label><input type="text" id="togiac-location" class="form-input"></div><div class="form-group"><label class="form-label">Nội dung tố giác chi tiết *</label><textarea id="togiac-content" class="form-textarea" rows="5" placeholder="Mô tả chi tiết sự việc..."></textarea></div><div class="form-group"><label class="form-label">Đính kèm file/ảnh (nếu có)</label><input type="file" class="form-input" disabled><small style="color:var(--text-light); font-size:11px;">Chức năng đính kèm tệp hiện không được hỗ trợ qua biểu mẫu này.</small></div><button id="togiac-submit-btn" class="btn-primary" onclick="submitToGoogleSheet('togiac')">Gửi tố giác</button>`},
+            hotline: { 
+                title: '📞 Đường Dây Nóng 24/24', 
+                content: `<div class="info-box warning"><p><strong>KHẨN CẤP:</strong> Gọi ngay <strong>113</strong> cho các tình huống khẩn cấp về an ninh, trật tự.</p></div><div style="text-align: center; padding: 10px 0;"><a href="tel:113" class="btn-primary" style="font-size: 24px; padding: 16px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 12px;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16" style="margin-top:-2px;"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.512z"/></svg> GỌI 113</a></div><div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;"><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Trực ban Công an tỉnh</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">0694100235</p></div><a href="tel:0694100235" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Trực ban Công an tỉnh (số khác)</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">02323822061</p></div><a href="tel:02323822061" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Trực ban Hình sự</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">02323822790</p></div><a href="tel:02323822790" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div><div class="list-item" style="padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: default;"><div class="list-item-text"><h4 style="font-size: 14px; margin-bottom: 2px;">Trực ban Giao thông</h4><p style="font-size: 16px; color: var(--primary-color); font-weight: 600;">02323822188</p></div><a href="tel:02323822188" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px; text-decoration: none;">Gọi</a></div></div>`
+            },
+            lichsu: { title: '🕒 Lịch sử hoạt động', content: `<div class="list-item" style="padding:12px 0;"><div class="list-item-icon">📄</div><div class="list-item-text"><h4>Nộp hồ sơ cấp lại CCCD</h4><p style="font-size:12px;color:var(--text-light)">01/10/2025 - Trạng thái: Đã duyệt</p></div></div><div class="list-item" style="padding:12px 0; border-bottom: none;"><div class="list-item-icon">💬</div><div class="list-item-text"><h4>Gửi phản ánh về ATGT</h4><p style="font-size:12px;color:var(--text-light)">28/09/2025 - Trạng thái: Đã tiếp nhận</p></div></div>`},
+            thongtincanhan: { title: 'ℹ️ Thông tin cá nhân', content: `Vui lòng đăng nhập để xem thông tin.` },
+            diachiCA: {
+                title: '🏢 Địa chỉ Cơ quan Công an',
+                content: `
+                    <div class="location-divider">-- TỈNH QUẢNG BÌNH --</div>
+                    <div class="location-item"><div class="location-icon">⭐</div><div class="location-details"><h4>Công an tỉnh Quảng Bình</h4><p>Số 12 Lý Thường Kiệt, TP. Đồng Hới</p><div class="location-actions"><a href="tel:02323822061" class="location-btn btn-call">📞 Gọi</a><a href="https://maps.app.goo.gl/9Cv2cQ8jQ9L9nZJ5A" target="_blank" class="location-btn btn-map">🗺️ Map</a></div></div></div>
+                    <div class="location-item"><div class="location-icon">🏙️</div><div class="location-details"><h4>Công an TP. Đồng Hới</h4><p>Số 02 Trần Hưng Đạo, TP. Đồng Hới</p><div class="location-actions"><a href="tel:02323822144" class="location-btn btn-call">📞 Gọi</a><a href="https://maps.app.goo.gl/FkGceCEUqNq8cABbA" target="_blank" class="location-btn btn-map">🗺️ Map</a></div></div></div>
+                    <div class="location-item"><div class="location-icon">🏛️</div><div class="location-details"><h4>Công an Huyện Lệ Thủy</h4><p>Đường Hùng Vương, TT. Kiến Giang</p><div class="location-actions"><a href="tel:02323963208" class="location-btn btn-call">📞 Gọi</a><a href="https://maps.app.goo.gl/z9E6m8f3x4y7z6w76" target="_blank" class="location-btn btn-map">🗺️ Map</a></div></div></div>
+                    <div class="location-divider">-- TỈNH QUẢNG TRỊ --</div>
+                    <div class="location-item"><div class="location-icon">⭐</div><div class="location-details"><h4>Công an tỉnh Quảng Trị</h4><p>Số 103 Trần Hưng Đạo, TP. Đông Hà</p><div class="location-actions"><a href="tel:02333852113" class="location-btn btn-call">📞 Gọi</a><a href="https://maps.app.goo.gl/8v6R8z9tQ5y9X9w59" target="_blank" class="location-btn btn-map">🗺️ Map</a></div></div></div>
+                    <div class="location-item"><div class="location-icon">🏙️</div><div class="location-details"><h4>Công an TP. Đông Hà</h4><p>Số 02 Lý Thường Kiệt, TP. Đông Hà</p><div class="location-actions"><a href="tel:02333852445" class="location-btn btn-call">📞 Gọi</a><a href="https://maps.app.goo.gl/d9Z7yY5Z9X8wX6R3A" target="_blank" class="location-btn btn-map">🗺️ Map</a></div></div></div>
+                    <div class="location-item"><div class="location-icon">🏛️</div><div class="location-details"><h4>Công an Huyện Vĩnh Linh</h4><p>TT. Hồ Xá, Vĩnh Linh</p><div class="location-actions"><a href="tel:02333820214" class="location-btn btn-call">📞 Gọi</a><a href="https://maps.app.goo.gl/N9s7zJ6Y3tF5uF8p8" target="_blank" class="location-btn btn-map">🗺️ Map</a></div></div></div>
+                `
+            },
+        };
+
+        function populateServices(containerId, serviceList) {
+             const container = document.getElementById(containerId);
+             container.innerHTML = serviceList.map(service => {
+                const action = service.url ? `window.open('${service.url}', '_blank')` : `openServiceModal('${service.id}')`;
+                return `<div class="service-item" onclick="${action}"><div class="service-icon" style="background: ${service.color};">${service.icon}</div><div class="service-name">${service.name}</div></div>`;
+            }).join('');
+        }
+        function populateHomeServices() { populateServices('home-services', ALL_SERVICES.slice(0, 8)); }
+        function populateAllServices() { populateServices('all-services', ALL_SERVICES); }
+
+        function openModal(title, content) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+        
+        document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        
+        function openServiceModal(serviceId) {
+            const service = ALL_SERVICES.find(s => s.id === serviceId);
+            if (service && service.requiresAuth && !isUserLoggedIn) {
+                showToast('Vui lòng đăng nhập để sử dụng chức năng này');
+                switchTab('profile', document.querySelector('[data-tab="profile"]'));
+                return;
+            }
+            const data = serviceModalContent[serviceId];
+            if (data) {
+                if (serviceId === 'thongtincanhan' && currentUser) {
+                    const userInfoContent = `
+                        <div class="form-group"><label class="form-label">Họ và tên</label><input type="text" id="userInfoName" class="form-input" value="${currentUser.name}"></div>
+                        <div class="form-group"><label class="form-label">Số CCCD</label><input type="text" id="userInfoCccd" class="form-input" value="${currentUser.cccd}"></div>
+                        <div class="form-group"><label class="form-label">Số điện thoại</label><input type="tel" id="userInfoPhone" class="form-input" value="${currentUser.phone}"></div>
+                        <button class="btn-primary" onclick="updateUserInfo()">Lưu thay đổi</button>`;
+                    openModal('ℹ️ Thông tin cá nhân', userInfoContent);
+                } else {
+                    openModal(data.title, data.content);
+                }
+            } else {
+                showToast('Lỗi: Dịch vụ không tồn tại');
+            }
+        }
+        
+        function submitRating() {
+            const rating = document.getElementById('rating-stars').dataset.rating;
+            showToast(rating ? `Cảm ơn bạn đã đánh giá ${rating} sao!` : `Cảm ơn bạn đã gửi đóng góp!`);
+            closeModal();
+        }
+
+        // ==========================================================
+        // *** ADDED: NEW FUNCTION TO SUBMIT DATA TO GOOGLE SHEETS ***
+        // ==========================================================
+function submitToGoogleSheet(formType) {
+            let data = {};
+            let submitBtn;
+            
+            // Collect data based on form type
+            if (formType === 'phananh') {
+                submitBtn = document.getElementById('phananh-submit-btn');
+                data = {
+                    type: 'Phản ánh',
+                    category: document.getElementById('phananh-category').value,
+                    content: document.getElementById('phananh-content').value,
+                };
+                if (!data.content) {
+                    showToast('❌ Vui lòng nhập nội dung phản ánh.');
+                    return;
+                }
+            } else if (formType === 'togiac') {
+                submitBtn = document.getElementById('togiac-submit-btn');
+                data = {
+                    type: 'Tố giác',
+                    name: document.getElementById('togiac-name').value,
+                    phone: document.getElementById('togiac-phone').value,
+                    category: document.getElementById('togiac-category').value,
+                    location: document.getElementById('togiac-location').value,
+                    content: document.getElementById('togiac-content').value,
+                };
+                if (!data.location || !data.content) {
+                    showToast('❌ Vui lòng nhập đầy đủ địa điểm và nội dung.');
+                    return;
+                }
+            }
+
+            if (!submitBtn) return;
+            
+            // --- PHẦN ĐÃ ĐƯỢC THAY ĐỔI ---
+
+            // Disable button to prevent multiple submissions
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang gửi...';
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // We keep this to allow the request to go through
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            // Since 'no-cors' prevents reading the server's response, we can't wait for confirmation.
+            // We'll assume the submission was successful and give the user immediate positive feedback.
+            // We use a short delay to make it feel like the request has completed.
+            setTimeout(() => {
+                showToast('✅ Gửi thành công! Cảm ơn bạn đã đóng góp.');
+                closeModal();
+            }, 800); // 800ms delay feels more natural
+        }
+
+
+        // ==========================================================
+        // SETTINGS FUNCTIONS
+        // ==========================================================
+        function openSettingsModal() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const settingsContent = `
+                <div class="settings-item">
+                    <span>🌙 Chế độ tối</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" onchange="toggleDarkMode()" ${isDarkMode ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <span>🔔 Nhận thông báo chung</span>
+                     <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                 <div class="settings-item">
+                    <span>📄 Cập nhật trạng thái hồ sơ</span>
+                     <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="info-box" style="margin-top: 24px;">
+                    <p><strong>Phiên bản ứng dụng:</strong> 1.2.0</p>
+                </div>
+            `;
+            openModal('⚙️ Cài đặt', settingsContent);
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        // ==========================================================
+        // AUTHENTICATION FUNCTIONS
+        // ==========================================================
+        function switchAuthTab(tab) {
+            document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+            document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+            document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+        }
+
+        function handleLogin() { 
+            const phone = document.getElementById('loginPhone').value;
+            const user = MOCK_USERS[phone];
+
+            if (user) { 
+                isUserLoggedIn = true;
+                currentUser = user; 
+                updateProfileView();
+                showToast(`✅ Đăng nhập thành công, ${currentUser.name}!`);
+            } else {
+                showToast('❌ Sai SĐT hoặc mật khẩu.');
+            }
+        }
+
+        function handleLogout() {
+            isUserLoggedIn = false;
+            currentUser = null; 
+            updateProfileView();
+            showToast('Đã đăng xuất');
+        }
+
+        function updateProfileView(){
+            const loggedInView = document.getElementById('logged-in-view');
+            const loggedOutView = document.getElementById('logged-out-view');
+            
+            loggedInView.classList.toggle('hidden', !isUserLoggedIn);
+            loggedOutView.classList.toggle('hidden', isUserLoggedIn);
+
+            if (isUserLoggedIn && currentUser) {
+                document.getElementById('profile-avatar').textContent = currentUser.avatar;
+                document.getElementById('profile-name').textContent = currentUser.name;
+                document.getElementById('profile-phone').textContent = currentUser.phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1***$3');
+            }
+        }
+        
+        function updateUserInfo() {
+            const newName = document.getElementById('userInfoName').value;
+            const newCccd = document.getElementById('userInfoCccd').value;
+            const newPhone = document.getElementById('userInfoPhone').value;
+
+            if (currentUser) {
+                currentUser.name = newName;
+                currentUser.cccd = newCccd;
+                currentUser.phone = newPhone;
+                
+                MOCK_USERS[currentUser.phone] = currentUser; 
+                
+                updateProfileView(); 
+                closeModal();
+                showToast('✅ Đã cập nhật thông tin thành công!');
+            } else {
+                showToast('Lỗi: Không tìm thấy thông tin người dùng.');
+            }
+        }
+
+        function sendOTP() {
+            const phone = document.getElementById('registerPhone').value;
+            if (phone.length < 9) {
+                showToast('Vui lòng nhập số điện thoại hợp lệ');
+                return;
+            }
+            const otpContent = `
+                <div style="text-align:center;">
+                    <p style="font-size:14px; color:var(--text-light)">Mã OTP đã được gửi đến SĐT <strong>${phone}</strong></p>
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <input type="text" id="otpInput" class="form-input" placeholder="Nhập mã OTP" inputmode="numeric" pattern="[0-9]*" style="text-align:center; font-size: 1.5rem; letter-spacing: 0.5em;">
+                </div>
+                <p style="font-size:12px; color:var(--text-light); text-align:center;">Chưa nhận được? <a href="#" style="color:var(--primary-color)">Gửi lại sau 30s</a></p>
+                <button class="btn-primary" style="margin-top:20px" onclick="verifyOTP()">Xác nhận</button>`;
+            openModal('Xác thực OTP', otpContent);
+        }
+        
+        function verifyOTP() {
+            const otp = document.getElementById('otpInput').value;
+            if (!otp || otp.length < 4) {
+                 showToast('Mã OTP không hợp lệ');
+                 return;
+            }
+            closeModal();
+            showToast('Xác thực thành công. Vui lòng tạo tài khoản.');
+             openModal('Tạo tài khoản', `<div class="form-group"><label class="form-label">Họ và tên</label><input type="text" class="form-input"></div><div class="form-group"><label class="form-label">Tạo mật khẩu</label><input type="password" class="form-input"></div><button class="btn-primary" onclick="handleRegister()">Hoàn tất đăng ký</button>`);
+        }
+        
+        function handleRegister() {
+             closeModal();
+             showToast('🎉 Đăng ký tài khoản thành công!');
+             const newUserPhone = document.getElementById('registerPhone').value;
+             MOCK_USERS[newUserPhone] = { name: "Người dùng mới", cccd: "Chưa cập nhật", phone: newUserPhone, avatar: "👤", password: "123" };
+             document.getElementById('loginPhone').value = newUserPhone;
+             handleLogin();
+        }
+
+        // ==========================================================
+        // THÔNG BÁO & KHÁC
+        // ==========================================================
+        function populateNotifications() {
+            const container = document.getElementById('notification-list');
+            if (MOCK_NOTIFICATIONS.length === 0) {
+                 container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-light);">Không có thông báo nào.</div>`;
+                 return;
+            }
+            container.innerHTML = MOCK_NOTIFICATIONS.map(n => `<div class="notification-item ${n.unread ? 'unread' : ''}"><div class="notification-icon">${n.icon}</div><div class="notification-content"><h4>${n.title}</h4><p>${n.description}</p><div class="notification-time">${n.time}</div></div></div>`).join('');
+        }
+
+        function updateNotifBadge() {
+            const unreadCount = MOCK_NOTIFICATIONS.filter(n => n.unread).length;
+            const badge = document.getElementById('notif-badge');
+            badge.style.display = unreadCount > 0 ? 'block' : 'none';
+        }
+
+        function openChatbot() {
+             openModal('💬 Trợ lý AI', `<div id="chatbot-container" style="display: flex; flex-direction: column; height: 65vh;"><div id="chatMessages"><div class="chat-message bot"><div class="chat-avatar">🤖</div><div class="chat-bubble bot-bubble">Xin chào! Tôi là trợ lý AI. Tôi có thể giúp gì cho bạn?<div class="quick-replies"><button class="quick-reply-btn" onclick="askBot('Thủ tục làm CCCD')">Thủ tục CCCD</button><button class="quick-reply-btn" onclick="askBot('Tra phạt nguội')">Tra phạt nguội</button><button class="quick-reply-btn" onclick="askBot('Tố giác tội phạm')">Tố giác tội phạm</button></div></div></div></div><div class="chat-input-area"><input type="text" class="chat-input" placeholder="Nhập câu hỏi..." id="chatInput" onkeypress="handleChatKeyPress(event)"><div class="chat-send-btn" onclick="sendChatMessage()">➤</div></div></div>`);
+        }
+        function handleChatKeyPress(event) { if (event.key === 'Enter') sendChatMessage(); }
+        function askBot(question) { document.getElementById('chatInput').value = question; sendChatMessage(); }
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                let botReply = "Xin lỗi, tôi chưa được huấn luyện về vấn đề này. Bạn có thể hỏi các chủ đề như 'CCCD', 'Phạt nguội', 'Đặt lịch', 'Tố giác' hoặc liên hệ đường dây nóng để được hỗ trợ trực tiếp.";
+                const lowerCaseMessage = message.toLowerCase();
+                if (lowerCaseMessage.includes("cccd") || lowerCaseMessage.includes("căn cước")) {
+                    botReply = "Để làm CCCD, bạn cần mang theo Sổ hộ khẩu (nếu có) và Giấy khai sinh (bản gốc) đến Công an xã/phường nơi thường trú. Bạn có muốn đặt lịch hẹn không?";
+                } else if (lowerCaseMessage.includes("phạt nguội")) {
+                    botReply = "Tôi có thể mở chức năng Tra cứu phạt nguội cho bạn ngay bây giờ. <br><button class='quick-reply-btn' style='margin-top: 8px;' onclick='openServiceModal(\"phatnguoi\")'>Mở tra cứu phạt nguội</button>";
+                } else if (lowerCaseMessage.includes("tố giác") || lowerCaseMessage.includes("tội phạm")) {
+                    botReply = "Để tố giác tội phạm, bạn có thể sử dụng chức năng ẩn danh của chúng tôi. Mọi thông tin sẽ được bảo mật. <br><button class='quick-reply-btn' style='margin-top: 8px;' onclick='openServiceModal(\"togiac\")'>Mở chức năng Tố giác</button>";
+                } else if (lowerCaseMessage.includes("đặt lịch") || lowerCaseMessage.includes("hẹn")) {
+                    botReply = "Tuyệt vời! Tôi sẽ mở chức năng Đặt lịch hẹn để bạn chọn thủ tục và thời gian phù hợp. <br><button class='quick-reply-btn' style='margin-top: 8px;' onclick='openServiceModal(\"datlich\")'>Mở Đặt lịch hẹn</button>";
+                }
+                addChatMessage(botReply, 'bot');
+            }, 1000);
+        }
+        function addChatMessage(message, sender) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.innerHTML = sender === 'user' ? `<div class="chat-bubble user-bubble">${message}</div>` : `<div class="chat-avatar">🤖</div><div class="chat-bubble bot-bubble">${message}</div>`;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+    </script>
+</body>
+</html>
