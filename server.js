@@ -4,7 +4,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const cors = require('cors');
 const https = require('https');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 
 // --- Khởi tạo ứng dụng Express ---
 const app = express();
@@ -148,3 +148,4 @@ app.get('/api/image-proxy', async (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server đang chạy tại http://0.0.0.0:${PORT}`);
 });
+
